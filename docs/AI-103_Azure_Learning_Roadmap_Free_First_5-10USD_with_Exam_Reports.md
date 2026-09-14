@@ -192,6 +192,8 @@ Sources:
 
 ## DAY 1 — Microsoft Foundry
 
+Detailed guide: [AI-103 Day 1 — Microsoft Foundry Fundamentals](AI-103_Day_1_Microsoft_Foundry_Fundamentals.md)
+
 Learn:
 
 - Microsoft Foundry
@@ -230,6 +232,8 @@ Sources:
 ---
 
 ## DAY 2 — Foundry Models / Azure OpenAI
+
+Detailed guide: [AI-103 Day 2 — Foundry Models / Azure OpenAI](AI-103_Day_2_Foundry_Models_Azure_OpenAI.md)
 
 Learn:
 
@@ -979,4 +983,3 @@ The goal is not to become an Azure Administrator.
 The goal is to become:
 
 > **An AI Engineer who can take a production AI system and implement it correctly on Microsoft Azure / Foundry.**
-
