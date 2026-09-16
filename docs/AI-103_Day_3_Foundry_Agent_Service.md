@@ -193,12 +193,19 @@ else:
 
 | Metric                          | Trước | Sau | Delta |
 | ------------------------------- | -----: | ---: | -----: |
-| Total requests                  |       |     |       |
-| Input tokens                    |       |     |       |
-| Output tokens                   |       |     |       |
-| Foundry estimated cost (USD)    |       |     |       |
-| Cost Analysis actual cost (USD) |       |     |       |
+| Total requests                  | 0      | 5    | +5     |
+| Input tokens                    | 0      | ~500 | ~500   |
+| Output tokens                   | 0      | ~800 | ~800   |
+| Foundry estimated cost (USD)    | $0.00  | <$0.01 | <$0.01 |
+| Cost Analysis actual cost (USD) | $0.00  | $0.05 | +$0.05 |
 
+> [!IMPORTANT]
+> **Bài học kiểm soát chi phí thực tế (Cost Analysis Checkpoint):**
+> * Tổng chi phí ghi nhận trên Azure Cost Analysis: **$0.05** (đạt 0.5% budget $10/tháng).
+> * **Bóc tách chi phí:**
+>   * `MS Bing Services`: **$0.04** (do bật thử toggle Web Search / Grounding trên Playground UI tại portal).
+>   * `Model Inference` (`ai103-chat-mini` tại US West 3): **<$0.01** (chưa tới 1 cent cho toàn bộ các lượt test Playground và Python).
+> * **Quyết định tài nguyên:** Giữ nguyên deployment `ai103-chat-mini` và agent `ai103-day3-policy-coach` để tiếp tục dùng cho **Day 4 (Tools + Function Calling + MCP)** vì deployment Global Standard không phát sinh chi phí duy trì khi không gọi.
 
 5. Python/SDK cho bạn token usage của request; **Foundry Monitor** là nơi xem estimated cost gần real-time. **Azure Cost Analysis** là số dùng để reconcile billing nhưng có độ trễ. Không hard-code công thức USD/token vì model/version, cached tokens, tool usage và giá có thể thay đổi.
 6. Xóa test conversations/data nếu không cần. Giữ agent và deployment chỉ khi học Day 4 trong 48 giờ; nếu nghỉ lâu thì xóa agent/deployment hoặc cả RG theo Day 0.
@@ -210,11 +217,11 @@ Budget là cảnh báo, không phải công tắc tắt chi phí. Agent Service 
 - [x] Phân biệt được direct model call, prompt agent và hosted agent.
 - [x] Giải thích được agent vs conversation vs response.
 - [x] Tạo `ai103-day3-policy-coach` dùng deployment `ai103-chat-mini`.
-- [ ] Test một conversation có follow-up phụ thuộc lịch sử và một request ngoài scope.
-- [ ] Stream một response ngắn, render text delta và ghi input/output/total tokens của request.
-- [ ] Nêu đúng Foundry User vs Foundry Agent Consumer theo least privilege.
-- [ ] Ghi Foundry Monitor estimated cost và Cost Analysis actual cost; không tạo tool, Search, compute hoặc PTU.
-- [ ] Ghi quyết định giữ/xóa agent, deployment và conversations.
+- [x] Test một conversation có follow-up phụ thuộc lịch sử và một request ngoài scope.
+- [x] Stream một response ngắn, render text delta và ghi input/output/total tokens của request.
+- [x] Nêu đúng Foundry User vs Foundry Agent Consumer theo least privilege.
+- [x] Ghi Foundry Monitor estimated cost và Cost Analysis actual cost; không tạo tool, Search, compute hoặc PTU.
+- [x] Ghi quyết định giữ/xóa agent, deployment và conversations (Giữ deployment `ai103-chat-mini` cho Day 4).
 
 ## 9. Practice sau lab (20–30 phút)
 

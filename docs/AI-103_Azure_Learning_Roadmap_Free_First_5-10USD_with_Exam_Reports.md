@@ -334,6 +334,8 @@ Sources:
 
 ## DAY 4 — Tools + Function Calling + MCP
 
+Detailed guide: [AI-103 Day 4 — Tools, Function Calling & MCP](AI-103_Day_4_Tools_Function_Calling_MCP.md)
+
 Learn:
 
 - custom tools
@@ -367,6 +369,8 @@ Sources:
 ---
 
 ## DAY 5 — Azure AI Search
+
+Detailed guide: [AI-103 Day 5 — Azure AI Search](AI-103_Day_5_Azure_AI_Search.md)
 
 This is one of the most important AI-103 areas.
 
