@@ -369,3 +369,5 @@ Chỉ đánh dấu hoàn thành khi bạn có đủ:
 ## Handoff sang Day 3
 
 Giữ lại duy nhất deployment `ai103-chat-mini` nếu bạn dự định làm Day 3 trong 48 giờ: nó sẽ là model cho Foundry Agent Service. Nếu không, xoá deployment/project/resource group để đóng chi phí, rồi Day 3 tạo lại theo cùng nguyên tắc.
+
+Guide tiếp theo: [AI-103 Day 3 — Foundry Agent Service](AI-103_Day_3_Foundry_Agent_Service.md).

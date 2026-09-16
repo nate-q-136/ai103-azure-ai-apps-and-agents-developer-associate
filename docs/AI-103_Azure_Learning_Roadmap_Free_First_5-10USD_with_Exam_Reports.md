@@ -276,19 +276,19 @@ Sources:
 
 ## DAY 3 — Foundry Agent Service
 
+Detailed guide: [AI-103 Day 3 — Foundry Agent Service](AI-103_Day_3_Foundry_Agent_Service.md)
+
 Learn:
 
-- instructions
-- conversations
-- tools
-- function calling
-- knowledge
-- memory
-- multi-agent
-- workflows
-- approvals
-- safeguards
-- monitoring
+- prompt agent: model + instructions + optional tools
+- runtime components: agent, conversation, response
+- multi-turn conversation and server-side state
+- streaming response, token usage and cost-monitoring distinction
+- agent versions, monitoring and cleanup
+- RBAC roles: Foundry User versus Foundry Agent Consumer
+
+Deliberately defer custom function calling/MCP to Day 4, knowledge/RAG to Days 5–6,
+and workflows/multi-agent orchestration until the one-agent lifecycle is clear.
 
 Compare:
 
@@ -310,20 +310,25 @@ Agent
 └── safeguards
 ```
 
-Create one tiny agent and test:
+Create one tiny **prompt agent** using the existing `ai103-chat-mini` deployment and test:
 
-1. basic question
-2. tool call
-3. structured tool
-4. multi-turn conversation
-5. failure case
+1. a bounded basic question
+2. a response that must follow agent instructions
+3. a two-turn conversation that depends on the first answer
+4. an out-of-scope request that the agent must decline or redirect
+5. the agent's trace/usage in the portal
 
-Foundry native prompt/workflow agents have no additional agent runtime charge, but model/tool usage can cost money.
+Start without web search, file search, code interpreter, managed compute, or external
+tools. Agent Service is stateful: delete test conversations/agent data you do not need.
+Model inference and any enabled tools can cost money.
 
-Source:
-[https://azure.microsoft.com/en-us/pricing/details/foundry-agent-service/](https://azure.microsoft.com/en-us/pricing/details/foundry-agent-service/)
+**Target cost:** $0.02–$0.15 for a short, no-tool lab. Stop after 5–8 short requests.
 
-**Target cost: **$0.50–$**2**
+Sources:
+
+- [Foundry Agent Service overview](https://learn.microsoft.com/en-us/azure/ai-services/agents/overview)
+- [Prompt agent quickstart](https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/prompt-agent)
+- [Agent runtime components](https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/runtime-components)
 
 ---
 
