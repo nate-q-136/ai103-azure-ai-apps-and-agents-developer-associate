@@ -20,26 +20,30 @@ Response     = một lần runtime xử lý input và tạo output
 
 ## 2. Những gì Day 3 làm — và chưa làm
 
-| Hôm nay | Để ngày sau |
-|---|---|
-| Prompt agent, instructions, conversation, response, agent version, trace/usage | Custom function và MCP (Day 4) |
-| Streaming response và per-request token usage | Background mode và long-running workloads |
-| Cách hạn chế scope của agent bằng instruction | Knowledge/RAG, AI Search, citations (Days 5–6) |
-| Tình huống Foundry User / Foundry Agent Consumer | Workflow, approval flow, multi-agent orchestration |
+
+| Hôm nay                                                                        | Để ngày sau                                        |
+| ------------------------------------------------------------------------------ | -------------------------------------------------- |
+| Prompt agent, instructions, conversation, response, agent version, trace/usage | Custom function và MCP (Day 4)                     |
+| Streaming response và per-request token usage                                  | Background mode và long-running workloads          |
+| Cách hạn chế scope của agent bằng instruction                                  | Knowledge/RAG, AI Search, citations (Days 5–6)     |
+| Tình huống Foundry User / Foundry Agent Consumer                               | Workflow, approval flow, multi-agent orchestration |
+
 
 Không bật Web search, File search hoặc Code Interpreter trong lab này. Các tool đó làm lẫn bài học về tool authorization/cost với vòng đời agent cơ bản.
 
 ## 3. Kiến thức thi cốt lõi
 
-| Yêu cầu trong scenario | Chọn / giải thích |
-|---|---|
-| Reuse một persona, model, instructions và tools cho nhiều request | Prompt agent |
-| Follow-up cần biết các lượt trước | Tạo/reuse conversation |
-| Chạy một lần tạo output từ agent/conversation | Response |
-| Developer tạo/sửa agent trong project | Foundry User tại project scope |
-| Client chỉ gọi endpoint agent có sẵn | Foundry Agent Consumer, không phải Owner |
-| Cần code/framework/container riêng | Hosted agent, không phải prompt agent |
-| Cần retrieval từ tài liệu nội bộ | Knowledge/RAG, không nhét toàn bộ tài liệu vào instruction |
+
+| Yêu cầu trong scenario                                            | Chọn / giải thích                                          |
+| ----------------------------------------------------------------- | ---------------------------------------------------------- |
+| Reuse một persona, model, instructions và tools cho nhiều request | Prompt agent                                               |
+| Follow-up cần biết các lượt trước                                 | Tạo/reuse conversation                                     |
+| Chạy một lần tạo output từ agent/conversation                     | Response                                                   |
+| Developer tạo/sửa agent trong project                             | Foundry User tại project scope                             |
+| Client chỉ gọi endpoint agent có sẵn                              | Foundry Agent Consumer, không phải Owner                   |
+| Cần code/framework/container riêng                                | Hosted agent, không phải prompt agent                      |
+| Cần retrieval từ tài liệu nội bộ                                  | Knowledge/RAG, không nhét toàn bộ tài liệu vào instruction |
+
 
 **Exam trap:** agent, conversation và response không đồng nghĩa. Agent là definition; conversation giữ lịch sử; response là execution. Conversation không phải “memory vô hạn”: nó có dữ liệu persisted và model chỉ nhận lượng context phù hợp context window.
 
@@ -186,13 +190,15 @@ else:
 3. Azure Portal → `rg-ai103-lab` → Cost analysis → group by **Resource**, sau đó **Meter**. Chỉ mong đợi model input/output tokens.
 4. Ghi note theo mẫu:
 
-| Metric | Trước | Sau | Delta |
-|---|---:|---:|---:|
-| Total requests | | | |
-| Input tokens | | | |
-| Output tokens | | | |
-| Foundry estimated cost (USD) | | | |
-| Cost Analysis actual cost (USD) | | | |
+
+| Metric                          | Trước | Sau | Delta |
+| ------------------------------- | -----: | ---: | -----: |
+| Total requests                  |       |     |       |
+| Input tokens                    |       |     |       |
+| Output tokens                   |       |     |       |
+| Foundry estimated cost (USD)    |       |     |       |
+| Cost Analysis actual cost (USD) |       |     |       |
+
 
 5. Python/SDK cho bạn token usage của request; **Foundry Monitor** là nơi xem estimated cost gần real-time. **Azure Cost Analysis** là số dùng để reconcile billing nhưng có độ trễ. Không hard-code công thức USD/token vì model/version, cached tokens, tool usage và giá có thể thay đổi.
 6. Xóa test conversations/data nếu không cần. Giữ agent và deployment chỉ khi học Day 4 trong 48 giờ; nếu nghỉ lâu thì xóa agent/deployment hoặc cả RG theo Day 0.
@@ -201,9 +207,9 @@ Budget là cảnh báo, không phải công tắc tắt chi phí. Agent Service 
 
 ## 8. Definition of Done — Day 3
 
-- [ ] Phân biệt được direct model call, prompt agent và hosted agent.
-- [ ] Giải thích được agent vs conversation vs response.
-- [ ] Tạo `ai103-day3-policy-coach` dùng deployment `ai103-chat-mini`.
+- [x] Phân biệt được direct model call, prompt agent và hosted agent.
+- [x] Giải thích được agent vs conversation vs response.
+- [x] Tạo `ai103-day3-policy-coach` dùng deployment `ai103-chat-mini`.
 - [ ] Test một conversation có follow-up phụ thuộc lịch sử và một request ngoài scope.
 - [ ] Stream một response ngắn, render text delta và ghi input/output/total tokens của request.
 - [ ] Nêu đúng Foundry User vs Foundry Agent Consumer theo least privilege.
@@ -227,3 +233,4 @@ Trả lời trước, rồi kiểm chứng **từng** đáp án bằng Microsoft
 - [Agent, conversation and response runtime components](https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/runtime-components)
 - [Agent Service environment setup and RBAC](https://learn.microsoft.com/en-us/azure/foundry/agents/environment-setup)
 - [Microsoft Learn: Develop AI agents on Azure](https://learn.microsoft.com/en-us/training/paths/develop-ai-agents-azure/)
+
