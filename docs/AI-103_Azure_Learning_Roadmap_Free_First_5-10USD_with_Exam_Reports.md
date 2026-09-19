@@ -433,6 +433,8 @@ Sources:
 
 ## DAY 6 — RAG + Grounding
 
+Detailed guide: [AI-103 Day 6 — RAG & Grounding](AI-103_Day_6_RAG_va_Grounding.md)
+
 Learn:
 
 - ingestion
@@ -467,6 +469,8 @@ Use only a small dataset.
 ---
 
 ## DAY 7 — Document Intelligence
+
+Detailed guide: [AI-103 Day 7 — Document Intelligence](AI-103_Day_7_Document_Intelligence.md)
 
 Learn:
 
@@ -512,6 +516,8 @@ Source:
 
 ## DAY 8 — Content Understanding
 
+Detailed guide: [AI-103 Day 8 — Content Understanding](AI-103_Day_8_Content_Understanding.md)
+
 Learn:
 
 - analyzers
@@ -547,6 +553,8 @@ Source:
 ---
 
 ## DAY 9 — Vision + Speech + Language
+
+Detailed guide: [AI-103 Day 9 — Vision, Speech & Language](AI-103_Day_9_Vision_Speech_Language.md)
 
 ### Vision
 
@@ -588,6 +596,8 @@ Sources:
 ---
 
 ## DAY 10 — Content Safety + Prompt Shields
+
+Detailed guide: [AI-103 Day 10 — Content Safety & Prompt Shields](AI-103_Day_10_Content_Safety_Prompt_Shields.md)
 
 Learn:
 
