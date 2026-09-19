@@ -21,11 +21,13 @@
   - `Search Index Data Contributor`: upload và query document data.
 - [x] Deploy embedding model `text-embedding-3-small`. Deployment name cũng là `text-embedding-3-small` và sẽ được dùng nguyên văn trong code.
 - [x] Chạy preflight keyless thành công với `DefaultAzureCredential`; service đang có `0 / 3` indexes theo quota F1.
+- [x] Tạo index `ai103-rag-index` với BM25 fields và HNSW vector field 1,536 chiều.
+- [x] Sinh embeddings rồi upload thành công ba chunks: `budget-policy-01`, `identity-policy-01`, và `search-policy-01`.
+- [x] Chạy hybrid retrieval; `budget-policy-01` đứng rank 1 cho câu hỏi về hạn mức chi phí.
+- [x] Chạy grounded generation bằng `ai103-chat-mini`: câu trả lời nêu budget `$10/tháng`, cảnh báo ở `80%`, citation `[1]`, và dùng 602 tokens.
 
 ### Việc tiếp theo
 
-- [ ] Chạy `uv run python labs/day-6/search_index.py --create-index` để tạo schema rỗng `ai103-rag-index`.
-- [ ] Sinh embeddings và upload ba document chunks mẫu.
 - [ ] Chạy hybrid retrieval, đóng gói citations, rồi tạo grounded answer.
 
 ### Lệnh kiểm tra đã dùng
@@ -98,6 +100,32 @@ Chọn cùng member cho role data-plane:
 Review role `Search Index Data Contributor` tại đúng resource scope:
 
 ![Review Search Index Data Contributor](../labs/day-6/14-data-contributor-review.png)
+
+#### 3. Upload chunks và xác nhận trong Search explorer
+
+Script `upload_document.py` đã sinh embeddings bằng deployment `text-embedding-3-small` rồi upload thành công ba chunks. Search explorer xác nhận `@odata.count: 3` và hiển thị metadata cùng nội dung của các documents:
+
+![Ba document chunks trong Search explorer](../labs/day-6/15-uploaded-documents-search-explorer.png)
+
+#### 4. Kiểm tra keyword retrieval (BM25)
+
+Truy vấn `ngân sách 10 USD` trong Search explorer trả đúng một document: `budget-policy-01`, `Azure Cost Policy`, category `finance`. Đây là checkpoint riêng cho text/BM25 retrieval, trước khi kết hợp với vector retrieval.
+
+![Keyword retrieval trả budget-policy-01](../labs/day-6/16-keyword-retrieval-search-explorer.png)
+
+#### 5. Grounded generation với citation
+
+`grounded_answer.py` dùng hai kết quả retrieval làm context, yêu cầu model chỉ trả lời dựa trên context và gắn citation. Kết quả đã xác nhận:
+
+```text
+Khi chi phí gần chạm hạn mức, Azure Cost Management sẽ gửi cảnh báo khi mức
+chi tiêu đạt 80% ngân sách (Resource group rg-ai103-lab có ngân sách
+10 USD/tháng) [1].
+
+[1] Azure Cost Policy — azure-cost-policy.md
+[2] Keyless Authentication Policy — azure-identity-policy.md
+Token usage: 602
+```
 
 ---
 
@@ -186,11 +214,8 @@ from azure.search.documents.indexes.models import (
     SearchFieldDataType,
     VectorSearch,
     HnswAlgorithmConfiguration,
+    HnswParameters,
     VectorSearchProfile,
-    SemanticConfiguration,
-    SemanticSearch,
-    SemanticPrioritizedFields,
-    SemanticField,
 )
 
 SEARCH_ENDPOINT = "https://<your-search-service>.search.windows.net"
@@ -202,20 +227,20 @@ index_client = SearchIndexClient(endpoint=SEARCH_ENDPOINT, credential=credential
 # 1. Định nghĩa các trường (Fields)
 fields = [
     # Trường khóa chính (bắt buộc)
-    SimpleField(name="chunk_id", type=SearchFieldDataType.String, key=True),
+    SimpleField(name="chunk_id", type=SearchFieldDataType.STRING, key=True),
     
     # Metadata lọc và hiển thị
-    SimpleField(name="parent_id", type=SearchFieldDataType.String, filterable=True, retrievable=True),
-    SearchableField(name="title", type=SearchFieldDataType.String, searchable=True, retrievable=True),
-    SimpleField(name="category", type=SearchFieldDataType.String, filterable=True, facetable=True),
+    SimpleField(name="parent_id", type=SearchFieldDataType.STRING, filterable=True, retrievable=True),
+    SearchableField(name="title", type=SearchFieldDataType.STRING, searchable=True, retrievable=True),
+    SimpleField(name="category", type=SearchFieldDataType.STRING, filterable=True, facetable=True),
     
     # Nội dung văn bản phục vụ BM25 và đọc ngữ cảnh
-    SearchableField(name="content", type=SearchFieldDataType.String, searchable=True, retrievable=True),
+    SearchableField(name="content", type=SearchFieldDataType.STRING, searchable=True, retrievable=True),
     
     # Trường Vector 1536 chiều (cho text-embedding-3-small)
     SearchField(
         name="content_vector",
-        type=SearchFieldDataType.collection(SearchFieldDataType.Single),
+        type=SearchFieldDataType.Collection(SearchFieldDataType.SINGLE),
         searchable=True,
         vector_search_dimensions=1536,
         vector_search_profile_name="my-hnsw-profile"
@@ -227,12 +252,12 @@ vector_search = VectorSearch(
     algorithms=[
         HnswAlgorithmConfiguration(
             name="my-hnsw-algo",
-            parameters={
-                "m": 4,                  # Số liên kết 2 chiều trên mỗi node đồ thị
-                "efConstruction": 400,    # Kích thước danh sách ứng viên khi xây dựng index
-                "efSearch": 500,          # Kích thước danh sách ứng viên khi truy vấn
-                "metric": "cosine"       # Khoảng cách so khớp: cosine, dotProduct, euclidean
-            }
+            parameters=HnswParameters(
+                m=4,
+                ef_construction=400,
+                ef_search=500,
+                metric="cosine",
+            )
         )
     ],
     profiles=[
@@ -243,23 +268,12 @@ vector_search = VectorSearch(
     ]
 )
 
-# 3. Cấu hình Semantic Search (Semantic Ranker L2)
-semantic_config = SemanticConfiguration(
-    name="my-semantic-config",
-    prioritized_fields=SemanticPrioritizedFields(
-        title_field=SemanticField(field_name="title"),
-        content_fields=[SemanticField(field_name="content")],
-        keywords_fields=[SemanticField(field_name="category")]
-    )
-)
-semantic_search = SemanticSearch(configurations=[semantic_config])
-
-# 4. Gom lại và tạo Index trên Azure
+# 3. Free (F1) không hỗ trợ Semantic Ranker. Lab này tạo index cho BM25 + HNSW;
+# Semantic Search chỉ thêm khi chuyển sang paid tier.
 index = SearchIndex(
     name=INDEX_NAME,
     fields=fields,
-    vector_search=vector_search,
-    semantic_search=semantic_search
+    vector_search=vector_search
 )
 
 index_client.create_or_update_index(index)
